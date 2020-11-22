@@ -24,7 +24,8 @@ let usa_chatbot = '';
 //Eventos Telegram
 
 const urlMidia = config.get('url_midia');
-
+let medico = { name: 'Joel Sotero', chat_id: 1454955671 };
+let sinaisVitais = '150 bpm'
 eventEmit.on('iniciar_config_telegram', async () => {
 
     //console.log('Emitido: iniciar_config_telegram');
@@ -97,114 +98,128 @@ eventEmit.on('iniciar_config_telegram', async () => {
                     await telegramBot.sendMessage(msg.chat.id, `Conversa com ID '${conversaDoUsuario._id}' encerrada pelo cliente`);
                 });
 
+                telegramBot.onText(/\/setMedico/, async function (msg, match) {
+                    // console.log('Detalhes do médico: ', msg);
+                    medico.chat_id = msg.chat.id;
+                    medico.name = msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`;
+                    console.log('Médico salvo: ', medico);
+                });
+
+                telegramBot.onText(/\/getSinais/, async function (msg, match) {
+                    // console.log('Detalhes do médico: ', msg);
+                    if(medico.chat_id!=''){
+                        await telegramBot.sendMessage(medico.chat_id, sinaisVitais);
+                        console.log('Enviando sinais vitais para o médico: ', medico);
+                    }
+                });
+
                 telegramBot.on('message', async function (msg) {
                     // console.log('CONVERSA -> CONVERSA TELEGRAM -> RECEBE');
                     let conversaDoUsuario = await verificaExisteConversaTelegram(msg.chat.id);
 
+                    // if (usa_chatbot && !conversaDoUsuario) {
 
+                    //     let cont = await Contato.find({ "id_telegram": msg.chat.id });
 
-                    if (usa_chatbot && !conversaDoUsuario) {
+                    //     let cliente = cont.length > 0 ? cont[0] : await criaClienteTelegram(msg, '');
 
-                        let cont = await Contato.find({ "id_telegram": msg.chat.id });
+                    //     const conversaCriadaFlexIA = await iniciaConversaComFlexia({
+                    //         nomeUsuario: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                    //         origem: 'telegram',
+                    //         formulario: false,
+                    //         cliente: cliente
+                    //     });
+                    //     let keyboardOptions = [];
+                    //     let textoTeclado = 'Você pode usar as opções no teclado abaixo tambem!';
+                    //     for (const mensagem of conversaCriadaFlexIA) {
+                    //         if (mensagem.response_type == 'text') {
+                    //             if (mensagem.texto) {
+                    //                 await telegramBot.sendMessage(msg.chat.id, mensagem.texto);
+                    //             } else if (mensagem.title) {
+                    //                 await telegramBot.sendMessage(msg.chat.id, mensagem.title);
+                    //             } else if (mensagem.description) {
+                    //                 await telegramBot.sendMessage(msg.chat.id, mensagem.description);
+                    //             }
+                    //         } else if (mensagem.response_type == 'image') {
+                    //             await telegramBot.sendPhoto(msg.chat.id, mensagem.source);
+                    //         } else {
+                    //             await telegramBot.sendMessage(msg.chat.id, mensagem.options);
+                    //             keyboardOptions.push([{ text: mensagem.options }]);
+                    //         }
+                    //     }
 
-                        let cliente = cont.length > 0 ? cont[0] : await criaClienteTelegram(msg, '');
+                    //     // Envia teclado de opções customizadas
+                    //     if (keyboardOptions.length > 0) {
+                    //         keyboardOptions.push([{ text: '/encerrar' }]);
+                    //         await telegramBot.sendMessage(msg.chat.id, textoTeclado, { reply_markup: { keyboard: keyboardOptions } });
+                    //     }
+                    //     eventEmit.emit('send_monit_adm', {});
+                    // } else if (usa_chatbot && conversaDoUsuario && conversaDoUsuario.atendimentoBot) { // existe a conversa do usuário
+                    //     //console.log('update da conversa');
+                    //     let resposta = await enviaMensagemParaFlexia(conversaDoUsuario, msg.text);
 
-                        const conversaCriadaFlexIA = await iniciaConversaComFlexia({
-                            nomeUsuario: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
-                            origem: 'telegram',
-                            formulario: false,
-                            cliente: cliente
-                        });
-                        let keyboardOptions = [];
-                        let textoTeclado = 'Você pode usar as opções no teclado abaixo tambem!';
-                        for (const mensagem of conversaCriadaFlexIA) {
-                            if (mensagem.response_type == 'text') {
-                                if (mensagem.texto) {
-                                    await telegramBot.sendMessage(msg.chat.id, mensagem.texto);
-                                } else if (mensagem.title) {
-                                    await telegramBot.sendMessage(msg.chat.id, mensagem.title);
-                                } else if (mensagem.description) {
-                                    await telegramBot.sendMessage(msg.chat.id, mensagem.description);
-                                }
-                            } else if (mensagem.response_type == 'image') {
-                                await telegramBot.sendPhoto(msg.chat.id, mensagem.source);
-                            } else {
-                                await telegramBot.sendMessage(msg.chat.id, mensagem.options);
-                                keyboardOptions.push([{ text: mensagem.options }]);
-                            }
-                        }
+                    //     let keyboardOptions = [];
+                    //     let textoTeclado = 'Você pode usar as opções no teclado abaixo tambem!';
 
-                        // Envia teclado de opções customizadas
-                        if (keyboardOptions.length > 0) {
-                            keyboardOptions.push([{ text: '/encerrar' }]);
-                            await telegramBot.sendMessage(msg.chat.id, textoTeclado, { reply_markup: { keyboard: keyboardOptions } });
-                        }
-                        eventEmit.emit('send_monit_adm', {});
-                    } else if (usa_chatbot && conversaDoUsuario && conversaDoUsuario.atendimentoBot) { // existe a conversa do usuário
-                        //console.log('update da conversa');
-                        let resposta = await enviaMensagemParaFlexia(conversaDoUsuario, msg.text);
+                    //     for (const mensagem of resposta) {
+                    //         if (mensagem.response_type == 'text') {
+                    //             if (mensagem.texto) {
+                    //                 await telegramBot.sendMessage(msg.chat.id, mensagem.texto);
+                    //             } else if (mensagem.title) {
+                    //                 await telegramBot.sendMessage(msg.chat.id, mensagem.title);
+                    //             } else if (mensagem.description) {
+                    //                 await telegramBot.sendMessage(msg.chat.id, mensagem.description);
+                    //             }
+                    //         } else if (mensagem.response_type == 'image') {
+                    //             await telegramBot.sendPhoto(msg.chat.id, mensagem.source);
+                    //         } else {
+                    //             await telegramBot.sendMessage(msg.chat.id, mensagem.options);
+                    //             keyboardOptions.push([{ text: mensagem.options }]);
+                    //         }
+                    //     }
+                    //     // Envia teclado de opções customizadas
+                    //     if (keyboardOptions.length > 0) {
+                    //         keyboardOptions.push([{ text: '/encerrar' }]);
+                    //         await telegramBot.sendMessage(msg.chat.id, textoTeclado, { reply_markup: { one_time_keyboard: true, keyboard: keyboardOptions } });
+                    //     }
 
-                        let keyboardOptions = [];
-                        let textoTeclado = 'Você pode usar as opções no teclado abaixo tambem!';
-
-                        for (const mensagem of resposta) {
-                            if (mensagem.response_type == 'text') {
-                                if (mensagem.texto) {
-                                    await telegramBot.sendMessage(msg.chat.id, mensagem.texto);
-                                } else if (mensagem.title) {
-                                    await telegramBot.sendMessage(msg.chat.id, mensagem.title);
-                                } else if (mensagem.description) {
-                                    await telegramBot.sendMessage(msg.chat.id, mensagem.description);
-                                }
-                            } else if (mensagem.response_type == 'image') {
-                                await telegramBot.sendPhoto(msg.chat.id, mensagem.source);
-                            } else {
-                                await telegramBot.sendMessage(msg.chat.id, mensagem.options);
-                                keyboardOptions.push([{ text: mensagem.options }]);
-                            }
-                        }
-                        // Envia teclado de opções customizadas
-                        if (keyboardOptions.length > 0) {
-                            keyboardOptions.push([{ text: '/encerrar' }]);
-                            await telegramBot.sendMessage(msg.chat.id, textoTeclado, { reply_markup: { one_time_keyboard: true, keyboard: keyboardOptions } });
-                        }
-
-                    } else if (usa_chatbot && conversaDoUsuario && !conversaDoUsuario.atendimentoBot) {
-                        if (msg.photo) {
-                            let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.photo[0].file_id), 'jpg', 'telegram');
+                    // } else if (usa_chatbot && conversaDoUsuario && !conversaDoUsuario.atendimentoBot) {
+                    //     if (msg.photo) {
+                    //         let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.photo[0].file_id), 'jpg', 'telegram');
 
 
 
-                            conversaDoUsuario.mensagens.push({
-                                escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
-                                source: `${urlMidia}${nomeArquivo}`,
-                                description: msg.caption ? msg.caption : '',
-                                cliente_ou_atendente: 'cliente',
-                                response_type: 'image'
-                            });
+                    //         conversaDoUsuario.mensagens.push({
+                    //             escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                    //             source: `${urlMidia}${nomeArquivo}`,
+                    //             description: msg.caption ? msg.caption : '',
+                    //             cliente_ou_atendente: 'cliente',
+                    //             response_type: 'image'
+                    //         });
 
-                        } else if (msg.text) {
-                            conversaDoUsuario.mensagens.push({
-                                escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
-                                texto: msg.text,
-                                cliente_ou_atendente: 'cliente',
-                                response_type: 'text'
-                            });
-                        } else if (msg.document) {
-                            let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.document.file_id), msg.document.file_name.split('.').pop(), 'telegram');
-                            conversaDoUsuario.mensagens.push({
-                                escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
-                                source: `${urlMidia}${nomeArquivo}`,
-                                cliente_ou_atendente: 'cliente',
-                                response_type: 'file'
-                            });
-                        }
+                    //     } else if (msg.text) {
+                    //         conversaDoUsuario.mensagens.push({
+                    //             escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                    //             texto: msg.text,
+                    //             cliente_ou_atendente: 'cliente',
+                    //             response_type: 'text'
+                    //         });
+                    //     } else if (msg.document) {
+                    //         let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.document.file_id), msg.document.file_name.split('.').pop(), 'telegram');
+                    //         conversaDoUsuario.mensagens.push({
+                    //             escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                    //             source: `${urlMidia}${nomeArquivo}`,
+                    //             cliente_ou_atendente: 'cliente',
+                    //             response_type: 'file'
+                    //         });
+                    //     }
 
-                        await ConversaAtendimento.findOneAndUpdate({ _id: conversaDoUsuario._id }, conversaDoUsuario);
-                        eventEmit.emit('enviar_msg_canal', { idDaConversa: conversaDoUsuario._id, mensagem: conversaDoUsuario.mensagens[conversaDoUsuario.mensagens.length - 1] });
-                    }
+                    //     await ConversaAtendimento.findOneAndUpdate({ _id: conversaDoUsuario._id }, conversaDoUsuario);
+                    //     eventEmit.emit('enviar_msg_canal', { idDaConversa: conversaDoUsuario._id, mensagem: conversaDoUsuario.mensagens[conversaDoUsuario.mensagens.length - 1] });
                     // }
-                    else if (!usa_chatbot) {
+                    // }
+                    // else 
+                    if (!usa_chatbot) {
                         if (conversaDoUsuario) {
                             if (msg.photo) {
                                 let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.photo[0].file_id), 'jpg', 'telegram');
@@ -225,6 +240,10 @@ eventEmit.on('iniciar_config_telegram', async () => {
                                     cliente_ou_atendente: 'cliente',
                                     response_type: 'text'
                                 });
+                                if(medico.chat_id!='' && msg.chat.id != medico.chat_id){
+                                    await telegramBot.sendMessage(medico.chat_id, msg.text);
+                                    console.log('Enviando mensagem de texto para o médico: ', medico);
+                                }
                             } else if (msg.document) {
                                 let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.document.file_id), msg.document.file_name.split('.').pop(), 'telegram');
                                 conversaDoUsuario.mensagens.push({
@@ -237,8 +256,9 @@ eventEmit.on('iniciar_config_telegram', async () => {
 
 
                             await ConversaAtendimento.findOneAndUpdate({ _id: conversaDoUsuario._id }, conversaDoUsuario);
-                            eventEmit.emit('enviar_msg_canal', { idDaConversa: conversaDoUsuario._id, mensagem: conversaDoUsuario.mensagens[conversaDoUsuario.mensagens.length - 1] });
-                        } else {
+                            console.log('Mensagem nova salva no banco da conversa existente');
+                            // eventEmit.emit('enviar_msg_canal', { idDaConversa: conversaDoUsuario._id, mensagem: conversaDoUsuario.mensagens[conversaDoUsuario.mensagens.length - 1] });
+                        } else if(!usa_chatbot && !conversaDoUsuario) {
 
                             let cont = await Contato.find({ "id_telegram": msg.chat.id });
                             let cliente = cont.length > 0 ? cont[0] : await criaClienteTelegram(msg, '');
@@ -283,6 +303,9 @@ eventEmit.on('iniciar_config_telegram', async () => {
                                     cliente_ou_atendente: 'cliente',
                                     response_type: 'text'
                                 });
+                                if(medico.chat_id!='' && msg.chat.id != medico.chat_id){
+                                    await telegramBot.sendMessage(medico.chat_id, msg.text);
+                                }
                             } else if (msg.document) {
                                 let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.document.file_id), msg.document.file_name.split('.').pop());
                                 conversaCriada.mensagens.push({
@@ -295,9 +318,9 @@ eventEmit.on('iniciar_config_telegram', async () => {
 
                             await ConversaAtendimento.findOneAndUpdate({ _id: conversaCriada._id }, conversaCriada);
                             await telegramBot.sendMessage(msg.chat.id, 'Olá, bem vindo ao nosso atendimento');
-                            eventEmit.emit('criar_conversa_canal', conversaCriada._id);
-                            eventEmit.emit('enviar_msg_canal', { idDaConversa: conversaCriada._id, mensagem: conversaCriada.mensagens[conversaCriada.mensagens.length - 1] });
-                            //console.log('Criou conversa');
+                            // eventEmit.emit('criar_conversa_canal', conversaCriada._id);
+                            // eventEmit.emit('enviar_msg_canal', { idDaConversa: conversaCriada._id, mensagem: conversaCriada.mensagens[conversaCriada.mensagens.length - 1] });
+                            console.log('Criou conversa');
                         }
                     }
 
