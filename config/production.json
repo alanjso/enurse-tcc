@@ -1,0 +1,42 @@
+{
+  "port": "443",
+  "port_http": "80",
+  "url_midia": "https://flexia.g4flex.com.br/uploads/",
+  "database_mongo_ip": "mongo",
+  "database_redis_ip": "redis",
+  "servidor-rabbitmq": "172.17.0.7",
+  "salesforce": {
+    "url": "https://login.salesforce.com/services/oauth2/token",
+    "clientId": "3MVG9_XwsqeYoueK.xr3Dmsir08I59VnkIXLDrzqBxsoXJWWCe.Z2ZuciQYpWNV_.915lawxI2QQrIjM2UFN9",
+    "clientSecret": "11F8D106C3A11A8E9DFFEC664C7BB7CC037F9A200DE244E39DAA4110864774D1",
+    "username": "integracao.g4flex@g4flex.temp",
+    "password": "g4flex1231HU2KulUtRHhUTCozpOPXnRI"
+  },
+  "watson": {
+    "assistantId": "12fe51be-c6d1-4bc3-acaa-a6de0d303081",
+    "apiKey": "9lz8kG9YLaGoD_wauqp2um4nnavKh6_p8k37DF13JwGE",
+    "user_id": "G4Fl3x"
+  },
+  "salesforce_url": "https://demog4-dev-ed.my.salesforce.com",
+  "servico_de_lead": false,
+  "usa_salesforce": false,
+  "usa_amqp": false,
+  "idWatsonAsterisk": "d9f2c669-9e2d-41cd-b5be-58184dbf72e3",
+  "inicio_atendimento": "",
+  "fim_atendimento": "",
+  "usa_chatbot": true,
+  "usa_telegram": true,
+  "tokenTelegram": "810511041:AAHyou1h13zrd7znT79HA4v-aq0cIJ2x1OE",
+  "tokenFacebook": "822892068:AAHq5k8-VN1CqhO9_TwPxJycYJYZSvynVOM",
+  "facebook_access_token": "EAAGVRhnISUcBAGdSFnV19pkfHEvWfFKTlDg1MN5CYAwA76VZAdnFo0frUqITZAhf4qbNDY0U8Ql9W7hxBs2ju5HhcaNZCrBHyQmESOGiNMa7uRYOwPx1ZC7NvoY2zsIzLrmZCZBi7Jy0lyO3wxBVwQG6BwZAi2rSaf6ZCZBTNGouxnv2ZCUB8uwQjZC",
+  "flexExports": "http://export.g4flex.com.br:3330",
+  "email": {
+    "habilitado": true,
+    "hostSMTP": "mail.g4flex.com.br",
+    "name": "G4 Flex",
+    "address": "noreply@g4flex.com.br",
+    "password": "1q2w3e4r5t!Q@W#E$R%T"
+  },
+  "baseUrlPronutrir": "http://13.85.40.155:9001",
+  "baseUrlLibercard": ""
+}

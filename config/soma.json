@@ -1,0 +1,28 @@
+{
+    "port": "80",
+    "url_midia": "https://ec2-35-163-76-243.us-west-2.compute.amazonaws.com/uploads/",
+    "database_mongo_ip": "mongo",
+    "database_redis_ip": "redis",
+    "servidor-rabbitmq": "172.17.0.7",
+    "watson": {
+        "assistantId": "37a99c9b-06eb-4634-990a-7cf3ce0c43de",
+        "apiKey": "IhTW1wApBnYri49PUqUqL9CkYsNggedWt91iTMeDcos-"
+    },
+    "salesforce_url": "https://g4flex.my.salesforce.com",
+    "servico_de_lead": false,
+    "usa_salesforce": false,
+    "usa_amqp": false,
+    "usa_chatbot": true,
+    "usa_telegram": true,
+    "tokenTelegram": "1010285530:AAHmvzM7DqbY-ILezeSoIDQ9_84qpb8__nk",
+    "tokenFacebook": "",
+    "facebook_access_token": "",
+    "flexExports": "http://export.g4flex.com.br:3330",
+    "email": {
+        "habilitado": true,
+        "hostSMTP": "mail.g4flex.com.br",
+        "name": "G4 Flex",
+        "address": "noreply@g4flex.com.br",
+        "password": "1q2w3e4r5t!Q@W#E$R%T"
+    }
+}

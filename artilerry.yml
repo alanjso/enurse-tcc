@@ -1,0 +1,26 @@
+config:
+  target: "https://cicd.g4flex.com.br"
+  phases:
+    - duration: 300
+      arrivalRate: 40
+      name: "Ambiente padrão"
+scenarios:
+  - name: "Testando socketio"
+    engine: "socketio"
+    flow:
+      - emit:
+          channel: "digitando"
+          data: "fazendo o teste da digitação"
+      - think: 300
+  - name: "Serviço de usuários"
+    flow:
+    - get:
+        url: "/user"
+  - name: "Serviço de casos"
+    flow:
+    - get:
+        url: '/casos'
+  - name: "Inicia conversa com watson"
+    flow:
+    - post:
+        url: '/conversa/flexia/iniciaConversaComFlexia'
