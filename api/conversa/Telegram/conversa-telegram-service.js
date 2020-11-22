@@ -24,7 +24,7 @@ let usa_chatbot = '';
 //Eventos Telegram
 
 const urlMidia = config.get('url_midia');
-let medico = { name: 'Joel Sotero', chat_id: 1454955671 };
+let medico = { name: 'Joel Sotero', id_telegram: 1454955671 };
 let sinaisVitais = '150 bpm'
 eventEmit.on('iniciar_config_telegram', async () => {
 
@@ -51,13 +51,13 @@ eventEmit.on('iniciar_config_telegram', async () => {
                 telegramBot.onText(/\/(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))/, async function (msg, match) {
                     // (?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))
 
-                    const conversaDoUsuario = await verificaExisteConversaTelegram(msg.chat.id);
+                    const conversaExistente = await verificaExisteConversaTelegram(msg.chat.id, medico);
 
-                    if (conversaDoUsuario) {
+                    if (conversaExistente) {
 
-                        conversaDoUsuario.cliente.celular = `${match[1]}${match[2]}${match[3]}`;
+                        conversaExistente.cliente.celular = `${match[1]}${match[2]}${match[3]}`;
 
-                        await ConversaAtendimento.findOneAndUpdate({ _id: conversaDoUsuario._id }, conversaDoUsuario);
+                        await ConversaAtendimento.findOneAndUpdate({ _id: conversaExistente._id }, conversaExistente);
                     }
 
                     await telegramBot.sendMessage(msg.chat.id, `Celular ${match[1]}${match[2]}${match[3]} atualizado`);
@@ -65,57 +65,68 @@ eventEmit.on('iniciar_config_telegram', async () => {
 
                 telegramBot.onText(/\/encerrar/, async function (msg, match) {
 
-                    const conversaDoUsuario = await verificaExisteConversaTelegram(msg.chat.id);
+                    const conversaExistente = await verificaExisteConversaTelegram(msg.chat.id, medico);
 
-                    if (conversaDoUsuario) {
+                    if (conversaExistente) {
 
-                        if (conversaDoUsuario.situacao === 'nao_atendida' || conversaDoUsuario.situacao === 'transferida') {
-                            conversaDoUsuario.situacao = 'abandonada';
-                            conversaDoUsuario.observacao = 'cliente encerrou a conversa';
-                            conversaDoUsuario.encerrada_por = 'CLIENTE';
-                            conversaDoUsuario.timeline.push({
+                        if (conversaExistente.situacao === 'nao_atendida' || conversaExistente.situacao === 'transferida') {
+                            conversaExistente.situacao = 'abandonada';
+                            conversaExistente.observacao = 'cliente encerrou a conversa';
+                            conversaExistente.encerrada_por = 'CLIENTE';
+                            conversaExistente.timeline.push({
                                 atividade: 'abandonada',
-                                descricao: `${conversaDoUsuario.cliente.nome} abandonou a conversa`
+                                descricao: `${conversaExistente.cliente.nome} abandonou a conversa`
                             });
                         } else {
-                            conversaDoUsuario.situacao = 'encerrada';
-                            conversaDoUsuario.observacao = 'cliente fechou a conversa antes do atendente encerrar';
-                            conversaDoUsuario.encerrada_por = 'ATENDENTE';
-                            conversaDoUsuario.timeline.push({
+                            conversaExistente.situacao = 'encerrada';
+                            conversaExistente.observacao = 'cliente fechou a conversa antes do atendente encerrar';
+                            conversaExistente.encerrada_por = 'ATENDENTE';
+                            conversaExistente.timeline.push({
                                 atividade: 'encerrada',
                                 descricao: `Conversa encerrada durante atendimento`
                             })
                         }
 
-                        conversaDoUsuario.encerrada = true;
-                        conversaDoUsuario.hora_fim_conversa = new Date();
-                        conversaDoUsuario.atendida = true;
-                        await ConversaAtendimento.findByIdAndUpdate({ '_id': conversaDoUsuario._id }, conversaDoUsuario);
-                        await limpaCache(conversaDoUsuario._id);
+                        conversaExistente.encerrada = true;
+                        conversaExistente.hora_fim_conversa = new Date();
+                        conversaExistente.atendida = true;
+                        await ConversaAtendimento.findByIdAndUpdate({ '_id': conversaExistente._id }, conversaExistente);
+                        await limpaCache(conversaExistente._id);
 
-                        eventEmit.emit('encerrar_conversa_telegram', conversaDoUsuario._id);
+                        eventEmit.emit('encerrar_conversa_telegram', conversaExistente._id);
                     }
-                    await telegramBot.sendMessage(msg.chat.id, `Conversa com ID '${conversaDoUsuario._id}' encerrada pelo cliente`);
+                    await telegramBot.sendMessage(msg.chat.id, `Conversa com ID '${conversaExistente._id}' encerrada pelo cliente`);
                 });
 
                 telegramBot.onText(/\/setMedico/, async function (msg, match) {
                     // console.log('Detalhes do médico: ', msg);
-                    medico.chat_id = msg.chat.id;
-                    medico.name = msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`;
-                    console.log('Médico salvo: ', medico);
+                    let conversaExistente = await verificaExisteConversaTelegram(msg.chat.id, medico);
+
+                    if (conversaExistente) {
+
+                        medico.id_telegram = msg.chat.id;
+                        medico.name = msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`;
+
+                        conversaExistente.atendente = medico
+
+                        await ConversaAtendimento.findOneAndUpdate({ _id: conversaExistente._id }, conversaExistente);
+                        console.log('Médico salvo: ', medico);
+
+                        await telegramBot.sendMessage(conversaExistente.atendente.id_telegram, `Novo médico: ${medico.name}`);
+                    }
                 });
 
                 telegramBot.onText(/\/getSinais/, async function (msg, match) {
                     // console.log('Detalhes do médico: ', msg);
-                    if(medico.chat_id!=''){
-                        await telegramBot.sendMessage(medico.chat_id, sinaisVitais);
+                    if (medico.id_telegram != '') {
+                        await telegramBot.sendMessage(medico.id_telegram, sinaisVitais);
                         console.log('Enviando sinais vitais para o médico: ', medico);
                     }
                 });
 
                 telegramBot.on('message', async function (msg) {
                     // console.log('CONVERSA -> CONVERSA TELEGRAM -> RECEBE');
-                    let conversaDoUsuario = await verificaExisteConversaTelegram(msg.chat.id);
+                    let conversaExistente = await verificaExisteConversaTelegram(msg.chat.id, medico);
 
                     // if (usa_chatbot && !conversaDoUsuario) {
 
@@ -220,12 +231,12 @@ eventEmit.on('iniciar_config_telegram', async () => {
                     // }
                     // else 
                     if (!usa_chatbot) {
-                        if (conversaDoUsuario) {
+                        if (conversaExistente) {
                             if (msg.photo) {
                                 let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.photo[0].file_id), 'jpg', 'telegram');
                                 //console.log('Nome arquivo: ', nomeArquivo);
 
-                                conversaDoUsuario.mensagens.push({
+                                conversaExistente.mensagens.push({
                                     escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
                                     source: `${urlMidia}${nomeArquivo}`,
                                     description: msg.caption ? msg.caption : '',
@@ -234,19 +245,32 @@ eventEmit.on('iniciar_config_telegram', async () => {
                                 });
 
                             } else if (msg.text) {
-                                conversaDoUsuario.mensagens.push({
-                                    escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
-                                    texto: msg.text,
-                                    cliente_ou_atendente: 'cliente',
-                                    response_type: 'text'
-                                });
-                                if(medico.chat_id!='' && msg.chat.id != medico.chat_id){
-                                    await telegramBot.sendMessage(medico.chat_id, msg.text);
-                                    console.log('Enviando mensagem de texto para o médico: ', medico);
+                                if (msg.chat.id == conversaExistente.cliente.id_telegram) {
+                                    conversaExistente.mensagens.push({
+                                        escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                                        texto: msg.text,
+                                        cliente_ou_atendente: 'cliente',
+                                        response_type: 'text'
+                                    });
+                                    if (medico.id_telegram != '') {
+                                        await telegramBot.sendMessage(medico.id_telegram, msg.text);
+                                        console.log('Enviando mensagem de texto para o médico: ', medico);
+                                    }
+                                } else if (msg.chat.id == medico.id_telegram) {
+                                    conversaExistente.mensagens.push({
+                                        escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                                        texto: msg.text,
+                                        cliente_ou_atendente: 'atendente',
+                                        response_type: 'text'
+                                    });
+                                    if (conversaExistente.cliente.id_telegram != '') {
+                                        await telegramBot.sendMessage(conversaExistente.cliente.id_telegram, msg.text);
+                                        console.log('Enviando mensagem de texto para o paciente: ', conversaExistente.cliente);
+                                    }
                                 }
                             } else if (msg.document) {
                                 let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.document.file_id), msg.document.file_name.split('.').pop(), 'telegram');
-                                conversaDoUsuario.mensagens.push({
+                                conversaExistente.mensagens.push({
                                     escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
                                     source: `${urlMidia}${nomeArquivo}`,
                                     cliente_ou_atendente: 'cliente',
@@ -255,23 +279,23 @@ eventEmit.on('iniciar_config_telegram', async () => {
                             }
 
 
-                            await ConversaAtendimento.findOneAndUpdate({ _id: conversaDoUsuario._id }, conversaDoUsuario);
+                            await ConversaAtendimento.findOneAndUpdate({ _id: conversaExistente._id }, conversaExistente);
                             console.log('Mensagem nova salva no banco da conversa existente');
                             // eventEmit.emit('enviar_msg_canal', { idDaConversa: conversaDoUsuario._id, mensagem: conversaDoUsuario.mensagens[conversaDoUsuario.mensagens.length - 1] });
-                        } else if(!usa_chatbot && !conversaDoUsuario) {
+                        } else if (!usa_chatbot && !conversaExistente) {
 
                             let cont = await Contato.find({ "id_telegram": msg.chat.id });
                             let cliente = cont.length > 0 ? cont[0] : await criaClienteTelegram(msg, '');
 
                             let conversaCriada = await ConversaAtendimento.create({
                                 cliente: cliente,
-                                atendente: { name: "" },
+                                atendente: medico,
                                 fila: 'Telegram',
                                 canal: 'telegram',
                                 atendida: false,
                                 encerrada: false,
-                                situacao: "nao_atendida",
-                                timeline: [{ atividade: 'nao_atendida', descricao: `${cliente.nome} entrou na fila Telegram` }]
+                                situacao: "em_atendimento",
+                                timeline: [{ atividade: 'em_atendimento', descricao: `${cliente.nome} entrou em atendimento pelo Telegram` }]
                             }); // mudar para em_atendimento quando integrar a FlexIA
 
                             if (msg.photo) {
@@ -297,14 +321,28 @@ eventEmit.on('iniciar_config_telegram', async () => {
                                 });
 
                             } else if (msg.text) {
-                                conversaCriada.mensagens.push({
-                                    escrita_por: `${msg.chat.first_name} ${msg.chat.last_name}`,
-                                    texto: msg.text,
-                                    cliente_ou_atendente: 'cliente',
-                                    response_type: 'text'
-                                });
-                                if(medico.chat_id!='' && msg.chat.id != medico.chat_id){
-                                    await telegramBot.sendMessage(medico.chat_id, msg.text);
+                                if (msg.chat.id == conversaCriada.cliente.id_telegram) {
+                                    conversaCriada.mensagens.push({
+                                        escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                                        texto: msg.text,
+                                        cliente_ou_atendente: 'cliente',
+                                        response_type: 'text'
+                                    });
+                                    if (medico.id_telegram != '') {
+                                        await telegramBot.sendMessage(medico.id_telegram, msg.text);
+                                        console.log('Enviando mensagem de texto para o médico: ', medico);
+                                    }
+                                } else if (msg.chat.id == medico.id_telegram) {
+                                    conversaCriada.mensagens.push({
+                                        escrita_por: msg.chat.last_name ? `${msg.chat.first_name} ${msg.chat.last_name}` : `${msg.chat.first_name}`,
+                                        texto: msg.text,
+                                        cliente_ou_atendente: 'atendente',
+                                        response_type: 'text'
+                                    });
+                                    if (conversaCriada.cliente.id_telegram != '') {
+                                        await telegramBot.sendMessage(conversaCriada.cliente.id_telegram, msg.text);
+                                        console.log('Enviando mensagem de texto para o paciente: ', conversaCriada.cliente);
+                                    }
                                 }
                             } else if (msg.document) {
                                 let nomeArquivo = await requestFile(await telegramBot.getFileLink(msg.document.file_id), msg.document.file_name.split('.').pop());
