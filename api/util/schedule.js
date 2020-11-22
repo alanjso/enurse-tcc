@@ -275,21 +275,21 @@ async function criaConfigBasica() {
         if (filas.length == 0) {
             //console.log('Criando Fila');
             filaAdmin = await Fila.create({
-                'nome': 'Admin G4Flex',
+                'nome': 'Admin',
                 'descricao': 'Fila Admin G4Flex'
             });
         }
 
         // Cria user Admin caso não exista!
-        let user = await User.findOne({ 'email': 'admin@g4flex.com.br' })
+        let user = await User.findOne({ 'email': 'admin@admin.com' })
         if (!user) {
             await User.create({
-                'nome': 'Admin G4Flex',
-                'email': 'admin@g4flex.com.br',
+                'nome': 'Admin',
+                'email': 'admin@admin.com',
                 'tipoDeUsuario': 'ADMINISTRADOR',
-                'senha': 'adming4flex',
+                'senha': '123456',
                 'userAtivo': true,
-                'darkMode': false,
+                'darkMode': true,
                 'filas': filaAdmin == null ? filas : [filaAdmin]
             });
         }
@@ -337,12 +337,12 @@ async function criaConfigBasica() {
                         'dia': 'DOMINGO'
                     }
                 ],
-                // 'telegram': {
-                //     'tokenTelegram': '1368145354:AAEA7G6g3Q14CKoZLRD6g6zChoEsI7WlVKY',
-                //     'descricao': '@alan_development_bot',
-                //     'usaBot': true,
-                //     'ativado': true
-                // },
+                'telegram': {
+                    'tokenTelegram': '1432517810:AAE10yQt0i5csDTDH_is5-6fdaw4MgNiS2M',
+                    'descricao': '@enurse_bot',
+                    'usaBot': false,
+                    'ativado': true
+                },
                 // 'watson': {
 
                 //     'nome_canal': 'Watson',
