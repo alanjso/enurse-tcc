@@ -29,7 +29,7 @@ module.exports = server => {
         Funcionalidade: busca todas as conversas encerradas
         Quem usa: app-integracao-mongo-psql.
     */
-   server.get(`${SERVICE}/listatodasencerradas`, conversaService.buscaTodasConversasEncerradas);
+    server.get(`${SERVICE}/listatodasencerradas`, conversaService.buscaTodasConversasEncerradas);
 
     /*
         Funcionalidade: busca as conversas por usuário.
@@ -178,5 +178,7 @@ module.exports = server => {
 
     server.get(`${SERVICE}/cliente/abandonou`, conversaService.clienteAbandonouConversa);
 
-    server.get(`${SERVICE}/verificaSeExisteConversaPorEmail/:email`,conversaService.verificaSeExisteConversaPorEmail);
+    server.get(`${SERVICE}/verificaSeExisteConversaPorEmail/:email`, conversaService.verificaSeExisteConversaPorEmail);
+
+    server.get(`${SERVICE}/delete/:id`, conversaService.deleteConversaId);
 }

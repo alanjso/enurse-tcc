@@ -940,6 +940,21 @@ module.exports = {
       message: 'OK',
       conversa
     });
+  },
+
+  deleteConversaId: async (req, res) => {
+
+    const { id } = req.params;
+
+    console.log(req.params)
+
+    const conversaDeletada = await ConversaAtendimento.findByIdAndDelete({ '_id': id });
+
+    console.log('conversa deletada: ', conversaDeletada);
+    if (!conversaDeletada) {
+      return res.status(200).json({ message: 'Conversa não existe' });
+    }
+    return res.status(200).json({ message: 'Conversa deletada' });
   }
 
 };
