@@ -137,7 +137,7 @@ setInterval(async function () {
 
 }, tempoTarefaOciosidade);
 
-let tempoTarefaMensagemFila = 1000; // 1800000 = 30 min / 600000 = 10 min / 60000 = 1 min
+let tempoTarefaMensagemFila = 60000; // 1800000 = 30 min / 600000 = 10 min / 60000 = 1 min
 setInterval(async function () {
     try {
         // Buscar conversas em fila pelo canal chat para broadcast
