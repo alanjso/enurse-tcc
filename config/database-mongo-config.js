@@ -5,7 +5,7 @@ module.exports = (url) => {
 
     const mongoose = require('mongoose');
 
-    mongoose.connect(`mongodb://${config.get('database_mongo_ip')}/flexchat`, { useNewUrlParser: true }); //Testa ajuste: { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
+    mongoose.connect(`mongodb://${config.get('database_mongo_ip')}/enurse`, { useNewUrlParser: true }); //Testa ajuste: { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
 
     mongoose.connection.on('connected', function () {
         log.success(' ==> Conectado ao MongoDB com sucesso <== ');
