@@ -37,11 +37,16 @@ const atendenteSchema = mongoose.Schema({
   name: {
     type: String
   },
+
   email: {
     type: String
   },
 
   codigo: {
+    type: String
+  },
+
+  id_telegram: {
     type: String
   },
 
