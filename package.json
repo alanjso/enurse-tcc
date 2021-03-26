@@ -37,6 +37,7 @@
     "moment": "^2.22.2",
     "mongoose": "^5.4.20",
     "morgan": "^1.9.1",
+    "mqtt": "^4.2.6",
     "multer": "^1.4.2",
     "node-forge": "^0.8.5",
     "node-telegram-bot-api": "^0.30.0",

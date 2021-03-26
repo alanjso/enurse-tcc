@@ -8,6 +8,7 @@ const redisAdapter = require('socket.io-redis');
 const eventEmit = require('./api/util/eventEmmiter');
 require('./api/util/schedule');
 require('./api/conversa/Telegram/conversa-telegram-service')();
+require('./api/util/mqtt');
 
 // var https = require('https').createServer({
 //   key: fs.readFileSync('./certificados-ssl/flexchannel.key'),
