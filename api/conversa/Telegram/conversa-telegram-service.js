@@ -388,6 +388,12 @@ eventEmit.on('enviar_arquivo_telegram', async (telegram_id, urlFile) => {
     telegramBot.sendDocument(telegram_id, urlFile);
 });
 
+eventEmit.on('atualizar_sinaisVitais', async (sinaisVitaisMQTT) => {
+    sinaisVitais = sinaisVitaisMQTT;
+    console.log('Enviando sinais vitais pelo telegram', sinaisVitais);
+    // telegramBot.sendMessage(medico.id_telegram, sinaisVitais);
+});
+
 module.exports = async () => {
     const config = await ConfigGeral.findOne();
     // console.log(configTelegram);
