@@ -25,7 +25,7 @@ let usa_chatbot = '';
 
 const urlMidia = config.get('url_midia');
 let medico = { name: 'Joel Sotero', id_telegram: 1454955671 };
-let sinaisVitais = '150 bpm'
+let sinaisVitais = { frequenciaCardiaca: '150' }
 eventEmit.on('iniciar_config_telegram', async () => {
 
     //console.log('Emitido: iniciar_config_telegram');
@@ -119,7 +119,7 @@ eventEmit.on('iniciar_config_telegram', async () => {
                 telegramBot.onText(/\/getSinais/, async function (msg, match) {
                     // console.log('Detalhes do médico: ', msg);
                     if (medico.id_telegram != '') {
-                        await telegramBot.sendMessage(medico.id_telegram, sinaisVitais);
+                        await telegramBot.sendMessage(medico.id_telegram, JSON.stringify(sinaisVitais));
                         console.log('Enviando sinais vitais para o médico: ', medico);
                     }
                 });
@@ -127,6 +127,13 @@ eventEmit.on('iniciar_config_telegram', async () => {
                 telegramBot.on('message', async function (msg) {
                     // console.log('CONVERSA -> CONVERSA TELEGRAM -> RECEBE');
                     let conversaExistente = await verificaExisteConversaTelegram(msg.chat.id, medico);
+                    if (msg.entities) {
+                        if (msg.entities[0].type = 'bot_command') {
+                            console.log('bot_command');
+                            return true;
+                        }
+                    }
+                    console.log(msg);
 
                     // if (usa_chatbot && !conversaDoUsuario) {
 
@@ -388,10 +395,12 @@ eventEmit.on('enviar_arquivo_telegram', async (telegram_id, urlFile) => {
     telegramBot.sendDocument(telegram_id, urlFile);
 });
 
-eventEmit.on('atualizar_sinaisVitais', async (sinaisVitaisMQTT) => {
-    sinaisVitais = sinaisVitaisMQTT;
-    console.log('Enviando sinais vitais pelo telegram', sinaisVitais);
-    // telegramBot.sendMessage(medico.id_telegram, sinaisVitais);
+eventEmit.on('atualizar_sinaisVitais', async (sinaisVitaisMQTT, posicao) => {
+    sinaisVitais[posicao] = sinaisVitaisMQTT;
+    console.log('Enviando sinais vitais pelo telegram', JSON.stringify(sinaisVitais));
+    telegramBot.sendMessage(medico.id_telegram, JSON.stringify(sinaisVitais));
+    // Alan 698412369
+    console.log(medico);
 });
 
 module.exports = async () => {
