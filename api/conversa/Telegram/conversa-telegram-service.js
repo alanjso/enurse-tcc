@@ -25,7 +25,13 @@ let usa_chatbot = '';
 
 const urlMidia = config.get('url_midia');
 let medico = { name: 'Joel Sotero', id_telegram: 1454955671 };
-let sinaisVitais = { frequenciaCardiaca: '150' }
+let sinaisVitais = {
+    frequenciaCardiaca: 'Valor Não Iniciado',
+    saturacaoOxigênio: 'Valor Não Iniciado',
+    temperatura: 'Valor Não Iniciado',
+    fluxoRespiratorio: 'Valor Não Iniciado',
+    sudorese: 'Valor Não Iniciado'
+}
 eventEmit.on('iniciar_config_telegram', async () => {
 
     //console.log('Emitido: iniciar_config_telegram');
