@@ -1,0 +1,149 @@
+    1  node
+    2  node -v
+    3  node --v
+    4  exit
+    5  sudo apt-get update
+    6  sudo apt-get dist-upgrade
+    7  curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+    8  curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+    9  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+   10  ~/.bashrc
+   11  sudo ~/.bashrc
+   12  sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+   13  nvm
+   14  sudo nvm
+   15  nvm -v
+   16  nvm install 10
+   17  nvm
+   18  ~/.bashrc
+   19  sudo ~/.bashrc
+   20  nvm install 10
+   21  node -v
+   22  nvm list
+   23  nvm alias default v10.22.0
+   24  npm -v
+   25  mkdir nodetest
+   26  cd nodetest/
+   27  nano blink.js
+   28  npm -i onoff
+   29  npm i onoff
+   30  ls
+   31  node blink.js 
+   32  nano blink.js
+   33  node blink.js 
+   34  EXIT
+   35  exit
+   36  cd nodetest/
+   37  node blink.js 
+   38  cd Projetos/generic-api/
+   39  git init
+   40  git add .
+   41  git commit -m "First commit generic api"
+   42  git config --global user.email "alanoliveira1512@gmail.com"
+   43  git config --global user.name "Alan Oliveira"
+   44  git commit -m "First commit generic api"
+   45  git push origin master
+   46  git remote add https://github/alanjso/generic-api.git
+   47  git remote add origin https://github/alanjso/generic-api.git
+   48  git push origin master 
+   49  git remote add origin https://github.com/alanjso/generic-api.git
+   50  git remote remove origin 
+   51  git remote add origin https://github.com/alanjso/generic-api.git
+   52  git push origin master 
+   53  exit
+   54  git status
+   55  ls
+   56  cd Projetos/
+   57  git clone http://187.60.42.211:8081/alan.oliveira/generi.git
+   58  cd generic-api/
+   59  ls
+   60  npm i
+   61  ls
+   62  nano config/development.json 
+   63  npm start
+   64  npm i nodemon -g
+   65  npm start
+   66  npm i socket.io
+   67  nano src/server.js 
+   68  npm start
+   69  clear
+   70  history
+   71  git remote remove origin 
+   72  git remote add origin https://github.com/alanjso/raspberry-webserver.git
+   73  git add .
+   74  git commit -m "Webserver plus socket.io for GPIO"
+   75  git push origin master 
+   76  exit
+   77  cd Projetos/
+   78  ls
+   79  git clone https://github.com/alanjso/raspberry-webserver.git
+   80  cd raspberry-webserver/
+   81  npm i
+   82  npm i nodemon
+   83  nodemon start
+   84  nano src/app/GPIO/gpio-service.js 
+   85  git status
+   86  git add src/app/GPIO/gpio-service.js 
+   87  git status
+   88  git commit -m "corrigido mensagem quando o led eh desligado pela rota turn/off"
+   89  git push origin master 
+   90  git checkout 
+   91  git status
+   92  git checkout package
+   93  git checkout package.json
+   94  git checkout package-lock.json
+   95  git status
+   96  clear
+   97  npm start
+   98  clear
+   99  exit
+  100  cd Projetos/raspberry-webserver/
+  101  cd ..
+  102  nodemon start Projetos/raspberry-webserver/
+  103  cd Projetos/raspberry-webserver/
+  104  git status
+  105  git pull origin master 
+  106  nano config/development.json 
+  107  nodemon start
+  108  npm i
+  109  nodemon start
+  110  exit
+  111  ls
+  112  cd Projetos/
+  113  git clone https://github.com/alanjso/enurse-tcc.git
+  114  cd enurse-tcc/
+  115  ls
+  116  code .
+  117  npm -v
+  118  node -v
+  119  sudo apt install code
+  120  sudo apt update
+  121  sudo apt install code
+  122  code .
+  123  sudo apt upgrade code
+  124  cd enurse-tcc/
+  125  cd Projetos/
+  126  cd enurse-tcc/
+  127  npm i tjbot
+  128  npm start
+  129  exit
+  130  curl -sSL https://get.docker.com | sh
+  131  sudo usermod -aG docker pi
+  132  sudo systemctl enable docker
+  133  systemctl status docker
+  134  docker ps
+  135  systemctl status docker
+  136  clear
+  137  sudo reboot -h now
+  138  docker pś
+  139  sudo docker ps
+  140  sudo usermod -aG docker pi
+  141  sudo usermod -aG docker raspbarrypi
+  142  sudo usermod -aG docker root
+  143  docker pś
+  144  docker ps
+  145  docker run -d -p 27017:27017 -p 28017:28017 --restart unless-stopped -e AUTH=no mongodb
+  146  docker run -d -p 27017:27017 -p 28017:28017 --restart unless-stopped -e AUTH=no mongo
+  147  docker run -d -p 27017:27017 -p 28017:28017 --restart unless-stopped -e AUTH=no tutum/mongodb
+  148  df
+  149  history
