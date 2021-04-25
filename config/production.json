@@ -2,7 +2,7 @@
   "port": "443",
   "port_http": "80",
   "url_midia": "https://flexia.g4flex.com.br/uploads/",
-  "database_mongo_ip": "mongo",
+  "database_mongo_ip": "@enurse.lutbm.mongodb.net/enurse?retryWrites=true&w=majority",
   "database_redis_ip": "redis",
   "servidor-rabbitmq": "172.17.0.7",
   "salesforce": {

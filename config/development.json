@@ -2,7 +2,7 @@
   "port": "4001",
   "port_http": "4000",
   "url_midia": "http://25.97.26.51:4000/uploads/",
-  "database_mongo_ip": "localhost",
+  "database_mongo_ip": "@enurse.lutbm.mongodb.net/enurse?retryWrites=true&w=majority",
   "database_redis_ip": "localhost",
   "servidor-rabbitmq": "localhost",
   "salesforce": {
