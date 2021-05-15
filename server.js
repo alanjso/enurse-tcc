@@ -9,6 +9,7 @@ const eventEmit = require('./api/util/eventEmmiter');
 require('./api/util/schedule');
 require('./api/conversa/Telegram/conversa-telegram-service')();
 require('./api/util/mqtt');
+require('./api/util/tjbot');
 
 // var https = require('https').createServer({
 //   key: fs.readFileSync('./certificados-ssl/flexchannel.key'),
