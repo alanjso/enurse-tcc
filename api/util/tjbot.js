@@ -1,8 +1,9 @@
-const TJBot = require('tjbot');
+import TJBot from 'tjbot';
 
 console.log(TJBot.CAPABILITIES);
 
 const tj = new TJBot({
+    credentialsFile="/home/pi/enurse-tcc/ibm.env",
     robot: {
         gender: TJBot.GENDERS.FEMALE
     },
