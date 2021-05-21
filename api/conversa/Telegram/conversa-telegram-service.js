@@ -122,6 +122,11 @@ eventEmit.on('iniciar_config_telegram', async () => {
                     }
                 });
 
+                telegramBot.onText(/\/tts (.*)/, async function (msg, match) {
+                    console.log('Texto do match TTS: ' + match[1]);
+                    eventEmit.emit('tts', match[1]);
+                });
+
                 telegramBot.onText(/\/getSinais/, async function (msg, match) {
                     // console.log('Detalhes do médico: ', msg);
                     if (medico.id_telegram != '') {
@@ -405,6 +410,7 @@ eventEmit.on('atualizar_sinaisVitais', async (sinaisVitaisMQTT, posicao) => {
     sinaisVitais[posicao] = sinaisVitaisMQTT;
     console.log('Enviando sinais vitais pelo telegram', JSON.stringify(sinaisVitais));
     telegramBot.sendMessage(medico.id_telegram, JSON.stringify(sinaisVitais));
+    telegramBot.sendMessage(698412369, JSON.stringify(sinaisVitais));
     // Alan 698412369
     console.log(medico);
 });

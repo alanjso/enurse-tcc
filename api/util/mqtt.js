@@ -78,6 +78,10 @@ client.on('message', function (topic, message) {
     }
 });
 
+eventEmmit.on('tts', async (tts) => {
+    client.publish(`${subscribeTopic}/tts`, tts, { qos: 1, retain: true });
+});
+
 // Frequência Cardíaca
 // Saturação de Oxigênio
 // Temperatura
