@@ -1,42 +1,42 @@
 {
   "port": "4001",
-  "port_http": "4000",
+  "port_http": "4001",
   "url_midia": "http://25.97.26.51:4000/uploads/",
-  "database_mongo_ip": "@enurse.lutbm.mongodb.net/enurse?retryWrites=true&w=majority",
+  "database_mongo_ip": "login:pw@enurse.lutbm.mongodb.net/enurse?retryWrites=true&w=majority",
   "database_redis_ip": "localhost",
   "servidor-rabbitmq": "localhost",
   "salesforce": {
-    "url": "https://test.salesforce.com/services/oauth2/token",
-    "clientId": "3MVG90D5vR7UtjbrqseLeHm9gG2JlniN.XsCLob8mpOb3Tpt3uZvHwkJkiPh2GwrH0EnEi5hWgI6KH0bOdiLg",
-    "clientSecret": "C91D48A51F71C220002CB68929900C3AFEEEAC8D183D8C7D4C7E62E3176F40A4",
-    "username": "integracao.g4flex@g4flex.com.br",
-    "password": "g4flex1593571D052lHHLuOWVm2dsO07WceTd"
+    "url": "",
+    "clientId": "",
+    "clientSecret": "",
+    "username": "",
+    "password": ""
   },
   "watson": {
-    "assistantId": "078d9d3f-5580-4bb4-be76-c8455af583aa",
-    "apiKey": "9lz8kG9YLaGoD_wauqp2um4nnavKh6_p8k37DF13JwGE",
-    "user_id": "G4Fl3x"
+    "assistantId": "",
+    "apiKey": "",
+    "user_id": ""
   },
-  "salesforce_url": "https://g4flex--dev01.my.salesforce.com",
+  "salesforce_url": "",
   "servico_de_lead": false,
   "usa_salesforce": false,
   "usa_amqp": false,
   "usa_chatbot": true,
-  "idWatsonAsterisk": "078d9d3f-5580-4bb4-be76-c8455af583aa",
+  "idWatsonAsterisk": "",
   "inicio_atendimento": "",
   "fim_atendimento": "",
   "usa_telegram": false,
-  "tokenTelegram": "822892068:AAHq5k8-VN1CqhO9_TwPxJycYJYZSvynVOM",
-  "tokenFacebook": "822892068:AAHq5k8-VN1CqhO9_TwPxJycYJYZSvynVOM",
-  "facebook_access_token": "EAATa9hSnTigBAA1711QDjyJ2rdV1e2HK52cV3OQCozZC5XW0rSUOh0ZCHof64yuZCwtV6N6N4gKZCHQY7Q6mwWcc1ddwTVKJksB8ZBOPfVmj7AHwp0d9AN0xZA0RMfXqrhifrTeD57pCrAz6oYeU3JZCWww9AnJ1IjmBKABZAqYPnXOgmdixTmcZB",
+  "tokenTelegram": "",
+  "tokenFacebook": "",
+  "facebook_access_token": "",
   "flexExports": "http://export.g4flex.com.br:3330",
   "email": {
-    "habilitado": true,
+    "habilitado": false,
     "hostSMTP": "mail.g4flex.com.br",
     "name": "G4 Flex",
     "address": "noreply@g4flex.com.br",
-    "password": "1q2w3e4r5t!Q@W#E$R%T"
+    "password": ""
   },
-  "baseUrlPronutrir": "http://13.85.40.155:9001",
-  "baseUrlLibercard": "https://www5.libercard.com.br/g4flex"
+  "baseUrlPronutrir": "",
+  "baseUrlLibercard": ""
 }

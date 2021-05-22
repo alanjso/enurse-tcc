@@ -2,14 +2,13 @@ const fs = require('fs')
 const log = require('./api/util/logs')
 const server = require("./config/express-config");
 const config = require("config");
-const redisAdapter = require('socket.io-redis');
+// const redisAdapter = require('socket.io-redis');
 //const redis = require('./config/database-redis-config');
 //const redis = require('socket.io-redis');
 const eventEmit = require('./api/util/eventEmmiter');
 require('./api/util/schedule');
 require('./api/conversa/Telegram/conversa-telegram-service')();
 require('./api/util/mqtt');
-require('./api/util/tjbot');
 
 // var https = require('https').createServer({
 //   key: fs.readFileSync('./certificados-ssl/flexchannel.key'),
@@ -27,7 +26,6 @@ let io = require('socket.io')(http);
 io.set('heartbeat timeout', 4000000);
 io.set('heartbeat interval', 2000000);
 require('./api/conversa/v2/conversa-socket-service')(io);
-// const asterisk = require('./api/asterisk/connections');
 
 // https.listen(config.get("port"), () => {
 //   log.success(' ==> Servidor HTTPS Rodando na Porta: ' + config.get("port"))
@@ -37,8 +35,8 @@ http.listen(config.get("port_http"), () => {
   log.success(' ==> Servidor HTTP Rodando na Porta: ' + config.get("port_http"))
 });
 
-server.get("/api/health", (req, res) => {
-  res.json({ message: 'Server up.' });
+server.get("/health", (req, res) => {
+  res.json({ enurse: 'E-nurse => Server up.' });
 });
 
 module.exports = server;

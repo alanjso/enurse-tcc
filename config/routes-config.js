@@ -10,7 +10,6 @@ module.exports = server => {
     require('../api/produto/produto.route')(server);
     require('../api/setor/setor.route')(server);
     require('../api/contato/contato.route')(server);
-    // require('../api/monitoramento/monitoramento.route')(server);
     require('../api/campanha/campanha.route')(server);
     require('../api/services/facebook/webhook.route')(server);
     require('../api/frases/frases.route')(server);
@@ -25,7 +24,6 @@ module.exports = server => {
     require('../api/sub-motivo/sub-motivo.route')(server);
     require('../api/integracoes/integracao.route')(server);
     require('../api/mensagemFila/mensagemFila-route')(server);
-    require('../api/asterisk/click-to-call/click-to-call.route')(server);
     require('../api/crud-pausa/crudPausa-route')(server);
     require('../api/relatorio-pausa/relatorioPausa-route')(server);
 }

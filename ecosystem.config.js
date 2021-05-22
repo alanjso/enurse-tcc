@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: "flex-chat-api",
+            name: "E-nurse",
             script: "./server.js",
             NODE_ENV: "production",
         }

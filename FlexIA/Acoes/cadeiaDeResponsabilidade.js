@@ -20,7 +20,6 @@ const AcaoUnificaContato = require('./AcaoUnificaContato');
 const AcaoEnviaEmail = require('./AcaoEnviaEmail');
 const AcaoPronutrir = require('./Pronutrir/AcaoPronutrir');
 const AcaoProcurarFarmacia = require('./PagueMenos/AcaoProcurarFarmacia');
-const AcaoRealizaLigacao = require('./Taurus/AcaoRealizaLigacao');
 const AcaoLibercard = require('./Libercard/AcaoLibercard');
 
 module.exports = async function iniciaCadeiaDeResponsabilidade(acao, conversa, responseFlexIA, flexIA_Assistente, origem) {
@@ -41,8 +40,7 @@ module.exports = async function iniciaCadeiaDeResponsabilidade(acao, conversa, r
     Checkpoint.setSucessor(AcaoConsultaClienteApodi);
     AcaoConsultaClienteApodi.setSucessor(AcaoConsultaUsuarioSecreto);
     AcaoConsultaUsuarioSecreto.setSucessor(AcaoCriarProtocolo);
-    AcaoCriarProtocolo.setSucessor(AcaoRealizaLigacao);
-    AcaoRealizaLigacao.setSucessor(AcaoProcurarFarmacia);
+    AcaoCriarProtocolo.setSucessor(AcaoProcurarFarmacia);
     AcaoProcurarFarmacia.setSucessor(AcaoLibercard);
     AcaoLibercard.setSucessor(AcaoPronutrir);
     AcaoPronutrir.setSucessor(AcaoConsultaTarefas)

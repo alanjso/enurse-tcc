@@ -1,20 +1,19 @@
 {
-  "name": "flex-chat-api",
-  "version": "1.25.0",
+  "name": "e-nurse",
+  "version": "1.0.0",
   "stability": "Beta",
-  "date": "20/05/2020",
-  "description": "Correcao de pequenos bugs e mescla de contatos",
+  "date": "22/05/2021",
+  "description": "Versão POC para rodar no Docker com Node v10.24.1 na raspbarry ou PC",
   "main": "server.js",
   "scripts": {
     "test": "mocha --exit",
-    "start": "node --experimental-modules server.js"
+    "start": "node server.js"
   },
-  "author": "G4Flex",
+  "author": "Alan Oliveira",
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.7.1",
     "app-root-path": "^2.2.1",
-    "asterisk-ami-client": "^1.1.5",
     "axios": "^0.21.1",
     "bcrypt": "^3.0.6",
     "chalk": "^2.4.2",
@@ -53,7 +52,6 @@
     "sequelize": "^5.21.3",
     "socket.io": "^2.4.1",
     "socket.io-redis": "^5.3.0",
-    "tjbot": "^2.0.1",
     "uws": "^100.0.1",
     "watson-developer-cloud": "^3.12.0",
     "winston": "^3.1.0",
@@ -63,6 +61,5 @@
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "supertest": "^3.1.0"
-  },
-  "type": "module"
+  }
 }
