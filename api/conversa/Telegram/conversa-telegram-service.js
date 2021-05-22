@@ -398,6 +398,12 @@ eventEmit.on('enviar_msg_telegram', async (telegram_id, texto) => {
     telegramBot.sendMessage(telegram_id, texto);
 });
 
+eventEmit.on('stt', async (stt) => {
+    console.log('##### STT #####');
+    telegramBot.sendMessage(medico.id_telegram, stt);
+    telegramBot.sendMessage(698412369, stt);
+});
+
 eventEmit.on('enviar_foto_telegram', async (telegram_id, urlPhoto) => {
     telegramBot.sendPhoto(telegram_id, urlPhoto);
 });

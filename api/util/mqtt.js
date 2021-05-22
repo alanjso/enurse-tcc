@@ -55,6 +55,14 @@ client.on('connect', function () {
             console.log(`Erro subscribe ${subscribeTopic}/sudorese`);
         }
     });
+
+    client.subscribe(`${subscribeTopic}/stt`, function (err) {
+        if (!err) {
+            console.log(`Sucesso no subscribe ${subscribeTopic}/stt`)
+        } else {
+            console.log(`Erro subscribe ${subscribeTopic}/sudorese`);
+        }
+    });
 });
 
 client.on('message', function (topic, message) {
@@ -71,6 +79,8 @@ client.on('message', function (topic, message) {
         eventEmmit.emit('atualizar_sinaisVitais', message.toString(), 'fluxoRespiratorio');
     } else if (topic == `${subscribeTopic}/sudorese`) {
         eventEmmit.emit('atualizar_sinaisVitais', message.toString(), 'sudorese');
+    } else if (topic == `${subscribeTopic}/stt`) {
+        eventEmmit.emit('stt', message.toString());
     } else if (message.toString() == 'client.end()') {
         console.log('Vamos desconectar');
         client.publish(subscribeTopic, "Desconectando do HiveMQ Broker", { qos: 1, retain: true });
