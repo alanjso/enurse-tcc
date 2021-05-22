@@ -7,15 +7,15 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha --exit",
-    "start": ""
+    "start": "node --experimental-modules server.js"
   },
   "author": "G4Flex",
   "license": "ISC",
   "dependencies": {
-    "amqplib": "^0.5.2",
+    "amqplib": "^0.7.1",
     "app-root-path": "^2.2.1",
     "asterisk-ami-client": "^1.1.5",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bcrypt": "^3.0.6",
     "chalk": "^2.4.2",
     "compression": "^1.7.4",
@@ -35,11 +35,11 @@
     "md5": "^2.3.0",
     "mime": "^2.4.4",
     "moment": "^2.22.2",
-    "mongoose": "^5.4.20",
+    "mongoose": "^5.12.9",
     "morgan": "^1.9.1",
     "mqtt": "^4.2.6",
     "multer": "^1.4.2",
-    "node-forge": "^0.8.5",
+    "node-forge": "^0.10.0",
     "node-telegram-bot-api": "^0.30.0",
     "nodemailer": "^4.7.0",
     "pdfmake": "^0.1.57",
@@ -51,17 +51,18 @@
     "rijndael-js": "^2.0.0",
     "roboto-fontface": "^0.10.0",
     "sequelize": "^5.21.3",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.4.1",
     "socket.io-redis": "^5.3.0",
     "tjbot": "^2.0.1",
     "uws": "^100.0.1",
     "watson-developer-cloud": "^3.12.0",
     "winston": "^3.1.0",
-    "yup": "^0.27.0"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "supertest": "^3.1.0"
-  }
+  },
+  "type": "module"
 }
