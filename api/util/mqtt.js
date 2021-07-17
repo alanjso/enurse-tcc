@@ -21,11 +21,11 @@ client.on('connect', function () {
         }
     });
 
-    client.subscribe(`${subscribeTopic}/saturacaoOxigênio`, function (err) {
+    client.subscribe(`${subscribeTopic}/saturacaoOxigenio`, function (err) {
         if (!err) {
-            console.log(`Sucesso no subscribe ${subscribeTopic}/saturacaoOxigênio`)
+            console.log(`Sucesso no subscribe ${subscribeTopic}/saturacaoOxigenio`)
         } else {
-            console.log(`Erro subscribe ${subscribeTopic}/saturacaoOxigênio`);
+            console.log(`Erro subscribe ${subscribeTopic}/saturacaoOxigenio`);
         }
     });
 
@@ -71,8 +71,8 @@ client.on('message', function (topic, message) {
 
     if (topic == `${subscribeTopic}/frequenciaCardiaca`) {
         eventEmmit.emit('atualizar_sinaisVitais', message.toString(), 'frequenciaCardiaca');
-    } else if (topic == `${subscribeTopic}/saturacaoOxigênio`) {
-        eventEmmit.emit('atualizar_sinaisVitais', message.toString(), 'saturacaoOxigênio');
+    } else if (topic == `${subscribeTopic}/saturacaoOxigenio`) {
+        eventEmmit.emit('atualizar_sinaisVitais', message.toString(), 'saturacaoOxigenio');
     } else if (topic == `${subscribeTopic}/temperatura`) {
         eventEmmit.emit('atualizar_sinaisVitais', message.toString(), 'temperatura');
     } else if (topic == `${subscribeTopic}/fluxoRespiratorio`) {
