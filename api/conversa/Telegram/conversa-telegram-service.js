@@ -15,7 +15,6 @@ const requestFile = require('../conversa-utils/request-file');
 const log = require('../../util/logs');
 const ConfigGeral = require('../../configuracao/configuracao.model');
 const eventEmit = require('../../util/eventEmmiter');
-
 // Config Telegram
 let TOKEN = ''; // config.get("tokenTelegram");
 let telegramBot; // new TelegramBot(TOKEN, { polling: true });
@@ -25,13 +24,19 @@ let usa_chatbot = '';
 
 const urlMidia = config.get('url_midia');
 let medico = { name: 'Joel Sotero', id_telegram: 1454955671 };
+
+let configSinaisVitais = require('../../util/minMaxSinaisVitais');
+const ajuda = require('../../util/textoAjuda');
+
 let sinaisVitais = {
-    frequenciaCardiaca: 'Valor Não Iniciado',
-    saturacaoOxigênio: 'Valor Não Iniciado',
-    temperatura: 'Valor Não Iniciado',
-    fluxoRespiratorio: 'Valor Não Iniciado',
-    sudorese: 'Valor Não Iniciado'
+    frequenciaCardiaca: 0,
+    saturacaoOxigenio: 0,
+    temperatura: 0,
+    fluxoRespiratorio: 0,
+    sudorese: 0
 }
+
+
 eventEmit.on('iniciar_config_telegram', async () => {
 
     //console.log('Emitido: iniciar_config_telegram');
@@ -47,11 +52,11 @@ eventEmit.on('iniciar_config_telegram', async () => {
 
             if (configTelegram) {
                 telegramBot.onText(/\/start/, async function (msg) {
-                    let start = `/start : Envia a lista de comandos
-                /encerrar : Encerra o atendimento
-                /DDD9XXXXYYYY : Envie uma / seguido por seu número com DDD caso seja necessário que um de nossos atendentes lhe ligue`;
+                    await telegramBot.sendMessage(msg.chat.id, ajuda);
+                });
 
-                    // await telegramBot.sendMessage(msg.chat.id, start);
+                telegramBot.onText(/\/ajuda/, async function (msg) {
+                    await telegramBot.sendMessage(msg.chat.id, ajuda);
                 });
 
                 telegramBot.onText(/\/(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))/, async function (msg, match) {
@@ -134,14 +139,57 @@ eventEmit.on('iniciar_config_telegram', async () => {
                         let texto = "Sinais Vitais:\n"
                         texto = texto + sinaisVitais.temperatura + "\n";
                         texto = texto + sinaisVitais.frequenciaCardiaca + "\n";
-                        texto = texto + sinaisVitais.saturacaoOxigênio + "\n";
+                        texto = texto + sinaisVitais.saturacaoOxigenio + "\n";
                         texto = texto + sinaisVitais.fluxoRespiratorio + "\n";
                         texto = texto + sinaisVitais.sudorese;
 
                         await telegramBot.sendMessage(medico.id_telegram, texto);
-                        telegramBot.sendMessage(698412369, texto);
+                        await telegramBot.sendMessage(698412369, texto);
                         console.log('Enviando sinais vitais para o médico: ', medico);
                     }
+                });
+
+                telegramBot.onText(/\/getConfig/, async function (msg, match) {
+
+                    let texto = "Config Sinais Vitais:\n"
+                    texto = texto + 'mínimo BPM: ' + configSinaisVitais.minBpm + "\n";
+                    texto = texto + 'máximo BPM: ' + configSinaisVitais.maxBpm + "\n";
+                    texto = texto + '—————————' + "\n";
+                    texto = texto + 'mínimo SPO2: ' + configSinaisVitais.minSpo2 + "\n";
+                    texto = texto + 'máximo SPO2: ' + configSinaisVitais.maxSpo2 + "\n";
+                    texto = texto + '—————————' + "\n";
+                    texto = texto + 'mínimo Temp: ' + configSinaisVitais.minTemp + "\n";
+                    texto = texto + 'máximo Temp: ' + configSinaisVitais.maxTemp + "\n";
+                    await telegramBot.sendMessage(medico.id_telegram, texto);
+                    await telegramBot.sendMessage(698412369, texto);
+                    console.log('Enviando config sinais vitais');
+                });
+
+                telegramBot.onText(/\/setBpm (.*)/, async function (msg, match) {
+
+                    console.log('Match: ', match[1]);
+                    let minMax = match[1].split("|");
+
+                    configSinaisVitais.minBpm = parseInt(minMax[0]);
+                    configSinaisVitais.maxBpm = parseInt(minMax[1]);
+                });
+
+                telegramBot.onText(/\/setSpo2 (.*)/, async function (msg, match) {
+
+                    console.log('Match: ', match[1]);
+                    let minMax = match[1].split("|");
+
+                    configSinaisVitais.minSpo2 = parseInt(minMax[0]);
+                    configSinaisVitais.maxSpo2 = parseInt(minMax[1]);
+                });
+
+                telegramBot.onText(/\/setTemp (.*)/, async function (msg, match) {
+
+                    console.log('Match: ', match[1]);
+                    let minMax = match[1].split("|");
+
+                    configSinaisVitais.minTemp = parseInt(minMax[0]);
+                    configSinaisVitais.maxTemp = parseInt(minMax[1]);
                 });
 
                 telegramBot.on('message', async function (msg) {
@@ -407,6 +455,12 @@ eventEmit.on('enviar_msg_telegram', async (telegram_id, texto) => {
     telegramBot.sendMessage(telegram_id, texto);
 });
 
+eventEmit.on('notificar_medico', async (texto) => {
+    console.log('##### notificar_medico #####');
+    telegramBot.sendMessage(698412369, texto);
+    // telegramBot.sendMessage(medico.id_telegram, texto);
+});
+
 eventEmit.on('stt', async (stt) => {
     console.log('##### STT #####');
     telegramBot.sendMessage(medico.id_telegram, stt);
@@ -423,6 +477,9 @@ eventEmit.on('enviar_arquivo_telegram', async (telegram_id, urlFile) => {
 
 eventEmit.on('atualizar_sinaisVitais', async (sinaisVitaisMQTT, posicao) => {
     sinaisVitais[posicao] = sinaisVitaisMQTT;
+
+    eventEmit.emit('verifica_range', sinaisVitais);
+
     // console.log('Enviando sinais vitais pelo telegram', JSON.stringify(sinaisVitais));
     // Alan 698412369
 });

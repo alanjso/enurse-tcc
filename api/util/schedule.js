@@ -13,6 +13,34 @@ const rp = require('request-promise-native');
 const enviaImageWhatsApp = require('../conversa/whatsapp/envia-imagem-whatsapp');
 const config = require('config');
 
+let configSinaisVitais = require('../util/minMaxSinaisVitais');
+let sinaisVitaisAtuais = {
+    frequenciaCardiaca: 0,
+    saturacaoOxigenio: 0,
+    temperatura: 0,
+    fluxoRespiratorio: 0,
+    sudorese: 0
+}
+eventEmit.on('verifica_range', async (sinaisVitais) => {
+    console.log("Novos valores:");
+    console.log(sinaisVitais);
+    sinaisVitaisAtuais = sinaisVitais;
+    if (typeof sinaisVitaisAtuais.frequenciaCardiaca == 'string') {
+        sinaisVitaisAtuais.frequenciaCardiaca = parseInt(sinaisVitaisAtuais.frequenciaCardiaca.replace(/\D+/g, ''));
+    }
+
+    if (typeof sinaisVitaisAtuais.saturacaoOxigenio == 'string') {
+        sinaisVitaisAtuais.saturacaoOxigenio = parseInt(sinaisVitaisAtuais.saturacaoOxigenio.replace(/\D+/g, ''));
+    }
+
+    if (typeof sinaisVitaisAtuais.temperatura == 'string') {
+        sinaisVitaisAtuais.temperatura = parseInt(sinaisVitaisAtuais.temperatura.replace(/\D+/g, ''));
+    }
+    // sinaisVitaisAtuais.fluxoRespiratorio = parseInt(sinaisVitaisAtuais.fluxoRespiratorio.replace(/\D+/g, ''));
+    // sinaisVitaisAtuais.sudorese = parseInt(sinaisVitaisAtuais.sudorese.replace(/\D+/g, ''));
+
+});
+
 let configWhatsapp;
 let configFacebook;
 
@@ -87,185 +115,46 @@ async function enviarArquivoFacebook(urlArquivo, userID, type) {
     });
 }
 
-let tempoTarefaOciosidade = 600000; // 1800000 = 30 min / 600000 = 10 min / 60000 = 1 min
+let tempoTarefaNotificacaoSinais = 300000; // 1800000 = 30 min / 600000 = 10 min / 300000 = 5 min / 60000 = 1 min
 setInterval(async function () {
     try {
-        const config = await Configuracao.findOne();
+        console.log(new Date());
+        let texto = "";
+        console.log('Configuração dos sinais:');
+        console.log(configSinaisVitais);
 
-        if (config.timeoutAtendimento.habilitado) {
+        console.log('Valor dos sinais:');
+        console.log(sinaisVitaisAtuais);
 
-            // let conversasPresas = await ConversaAtendimento.find({ 'encerrada': true });
-            // if (conversasPresas.length > 0) {
-            //     for (const presa of conversasPresas) {
-            //         await limpaCacheSemAlterar(presa._id);
-            //     }
-            // }
+        if (sinaisVitaisAtuais.frequenciaCardiaca < configSinaisVitais.minBpm || sinaisVitaisAtuais.frequenciaCardiaca > configSinaisVitais.maxBpm) {
+            texto = "Frequência Cardiaca do paciente fora dos limites\n";
+            texto = texto + "valor atual: " + sinaisVitaisAtuais.frequenciaCardiaca;
+            eventEmit.emit('notificar_medico', texto);
+            texto = "";
+        }
 
-            let conversas = await ConversaAtendimento.find({ 'encerrada': false, 'situacao': 'em_atendimento' });
-            // console.log(`Hora da tarefa: ${new Date()}, Quantidade de conversas: ${conversas.length}`);
-            // let encerradas = 0;
-            if (conversas.length > 0) {
-                for (const conversa of conversas) {
-                    if (conversa.mensagens && conversa.mensagens.length > 0) {
-                        diff = dateFns.differenceInMilliseconds(new Date(), conversa.mensagens[conversa.mensagens.length - 1].hora_da_mensagem, { unit: 'ms' });
-                        if (diff > config.timeoutAtendimento.timeout) {
-                            await ConversaAtendimento.updateOne({ _id: conversa._id }, {
-                                $set: {
-                                    encerrada: true,
-                                    situacao: 'abandonada',
-                                    hora_fim_conversa: new Date(),
-                                    observacao: `Conversa sem interação a mais de ${config.timeoutAtendimento.timeout}ms`,
-                                    encerrada_por: 'OCIOSIDADE'
-                                }
-                            });
-                            await limpaCache(conversa._id);
-                            // log.success(`Conversa com ID: ${conversa._id} encerrada por ociosidade`);
-                            eventEmit.emit('conversa_abandonada_ociosidade', conversa._id), conversa.cliente.nome;
-                            // encerradas = encerradas + 1;
-                        }
-                    }
-                }
-                //console.log(`${encerradas} foram encerradas durante essa tarefa`);
-            }
+        if (sinaisVitaisAtuais.saturacaoOxigenio < configSinaisVitais.minSpo2 || sinaisVitaisAtuais.saturacaoOxigenio > configSinaisVitais.maxSpo2) {
+            texto = "Saturacao de Oxigenio do paciente fora dos limites\n";
+            texto = texto + "valor atual: " + sinaisVitaisAtuais.frequenciaCardiaca;
+            eventEmit.emit('notificar_medico', texto);
+            texto = "";
+        }
+
+        if (sinaisVitaisAtuais.temperatura < configSinaisVitais.minTemp || sinaisVitaisAtuais.temperatura > configSinaisVitais.maxTemp) {
+            texto = "Temperatura do paciente fora dos limites\n";
+            texto = texto + "valor atual: " + sinaisVitaisAtuais.frequenciaCardiaca;
+            eventEmit.emit('notificar_medico', texto);
+            texto = "";
         }
 
 
     } catch (error) {
-        log.error('** Erro na schedule de conversas ociosas **');
-        log.error(`** Erro: ${error} **`);
+        console.log('** Erro na schedule de  **');
+        console.log(`** Erro: ${error} **`);
     }
 
-}, tempoTarefaOciosidade);
+}, tempoTarefaNotificacaoSinais);
 
-let tempoTarefaMensagemFila = 60000; // 1800000 = 30 min / 600000 = 10 min / 60000 = 1 min
-setInterval(async function () {
-    try {
-        // Buscar conversas em fila pelo canal chat para broadcast
-        const msgFila = await MensagemFila.find();
-        if (msgFila.length > 0) {
-            const msgFilaAleatoria = msgFila[Math.floor(Math.random() * msgFila.length)];
-
-            let query = { 'encerrada': false }
-            query["situacao"] = { $in: ['nao_atendida', 'transferida'] };
-            query["canal"] = { $in: ['chat', 'ChatFlexIA'] };
-            let conversasFilaChat = await ConversaAtendimento.find(query);
-
-            if (conversasFilaChat.length > 0) {
-                eventEmit.emit('enviar_msg_fila', msgFilaAleatoria);
-            }
-
-            // Buscar conversas em fila pelos canais não-chat para enviar uma a uma
-            query["canal"] = { $ne: ['chat', 'ChatFlexIA'] };
-            let conversasFilaCanais = await ConversaAtendimento.find(query);
-
-            if (conversasFilaCanais.length > 0) {
-                await atualizaCredenciaisCanais();
-
-                for (const conversa of conversasFilaCanais) {
-                    if (msgFilaAleatoria.response_type == 'text') {
-                        // Envia texto nos canais
-                        if (conversa.canal == 'whatsapp') {
-                            // enviar para wpp
-                            await enviaMsgWhatsapp(msgFilaAleatoria.texto, conversa.cliente.celular);
-                        } else if (conversa.canal == 'telegram') {
-                            //   enviar para telegram
-                            eventEmit.emit('enviar_msg_telegram', conversa.cliente.id_telegram, msgFilaAleatoria.texto);
-                        } else if (conversa.canal == 'facebook') {
-                            // enviar para fb
-                            await enviarFacebook(msgFilaAleatoria.texto, conversa.cliente.id_facebook);
-                        }
-                    } else if (msgFilaAleatoria.response_type == 'image') {
-                        // enviar foto nos canais
-                        if (conversa.canal == 'whatsapp') {
-                            // enviar para wpp
-                            await enviaImageWhatsApp(msgFilaAleatoria.source, conversa.cliente.celular, '558539240077');
-                        } else if (conversa.canal == 'telegram') {
-                            //   enviar para telegram
-                            eventEmit.emit('enviar_foto_telegram', conversa.cliente.id_telegram, msgFilaAleatoria.source);
-                        } else if (conversa.canal == 'facebook') {
-                            // enviar para fb
-                            await enviarArquivoFacebook(msgFilaAleatoria.source, conversa.cliente.id_facebook, 'image');
-                        }
-                    } else {
-                        // Outros: lançar futuramente
-                        console.log('mensagem com solução não mapeada');
-                    }
-                }
-            }
-        }
-
-    } catch (error) {
-        log.error('** Erro na schedule de mensagens automaticas na fila **');
-        log.error(`** Erro: ${error} **`);
-    }
-
-}, tempoTarefaMensagemFila);
-// setInterval(async function () {
-//     try {
-//         // Buscar conversas em fila
-//         let query = { 'encerrada': false }
-//         query["situacao"] = { $in: ['nao_atendida', 'transferida'] };
-//         let conversasFila = await ConversaAtendimento.find(query);
-
-//         if (conversasFila.length > 0) {
-//             // Para cada conversa buscar mensagemFila
-//             for (const conversa of conversasFila) {
-//                 const msgFila = await MensagemFila.find({ 'filas.nome': conversa.fila });
-//                 if (msgFila.length > 0) {
-//                     // Atualizar configurações dos canais antes de tentar enviar
-//                     await atualizaCredenciaisCanais();
-//                     // Escolher aleatoriamente uma mensagemFila
-//                     const msgFilaAleatoria = msgFila[Math.floor(Math.random() * msgFila.length)]
-//                     // Atualizar conversa com a nova msg automatica
-//                     conversa.mensagens.push(msgFilaAleatoria);
-//                     await ConversaAtendimento.findOneAndUpdate({ _id: conversa._id }, conversa);
-//                     // Enviar mensagem de acordo com tipo de midia e de canal
-//                     if (msgFilaAleatoria.response_type == 'text') {
-//                         // Envia texto nos canais
-//                         if (conversa.canal == 'whatsapp') {
-//                             // enviar para wpp
-//                             await enviaMsgWhatsapp(msgFilaAleatoria.texto, conversa.cliente.celular);
-//                         } else if (conversa.canal == 'telegram') {
-//                             //   enviar para telegram
-//                             eventEmit.emit('enviar_msg_telegram', conversa.cliente.id_telegram, msgFilaAleatoria.texto);
-//                         } else if (conversa.canal == 'facebook') {
-//                             // enviar para fb
-//                             await enviarFacebook(msgFilaAleatoria.texto, conversa.cliente.id_facebook);
-//                         } else if (conversa.canal == 'chat' || conversa.canal == 'ChatFlexIA') {
-//                             // enviar para chat
-//                             console.log('chat');
-//                             eventEmit.emit('enviar_msg_fila', conversa, msgFilaAleatoria);
-//                         }
-//                     } else if (msgFilaAleatoria.response_type == 'image') {
-//                         // enviar foto nos canais
-//                         if (conversa.canal == 'whatsapp') {
-//                             // enviar para wpp
-//                             await enviaImageWhatsApp(msgFilaAleatoria.source, conversa.cliente.celular, '558539240077');
-//                         } else if (conversa.canal == 'telegram') {
-//                             //   enviar para telegram
-//                             eventEmit.emit('enviar_foto_telegram', conversa.cliente.id_telegram, msgFilaAleatoria.source);
-//                         } else if (conversa.canal == 'facebook') {
-//                             // enviar para fb
-//                             await enviarArquivoFacebook(msgFilaAleatoria.source, conversa.cliente.id_facebook, 'image');
-//                         } else if (conversa.canal == 'chat' || conversa.canal == 'ChatFlexIA') {
-//                             // enviar para chat
-//                             eventEmit.emit('enviar_msg_fila', conversa, msgFilaAleatoria);
-//                         }
-//                     } else {
-//                         // Outros: lançar futuramente
-//                         console.log('mensagem com solução não mapeada');
-//                     }
-//                 } else {
-//                     console.log(`Sem mensagens cadastradas para a fila ${conversa.fila}`);
-//                 }
-//             }
-//         }
-//     } catch (error) {
-//         log.error('** Erro na schedule de mensagens automaticas na fila **');
-//         log.error(`** Erro: ${error} **`);
-//     }
-
-// }, tempoTarefaMensagemFila);
 
 async function criaConfigBasica() {
     try {
