@@ -137,11 +137,12 @@ eventEmit.on('iniciar_config_telegram', async () => {
                     if (medico.id_telegram != '') {
 
                         let texto = "Sinais Vitais:\n"
-                        texto = texto + sinaisVitais.temperatura + "\n";
-                        texto = texto + sinaisVitais.frequenciaCardiaca + "\n";
-                        texto = texto + sinaisVitais.saturacaoOxigenio + "\n";
-                        texto = texto + sinaisVitais.fluxoRespiratorio + "\n";
-                        texto = texto + sinaisVitais.sudorese;
+                        texto = texto + sinaisVitais.temperatura + "ºC\n";
+                        texto = texto + sinaisVitais.frequenciaCardiaca + "BPM\n";
+                        texto = texto + sinaisVitais.saturacaoOxigenio + "SPO2\n";
+                        texto = texto + "https://dashboard-eva.mybluemix.net/ui";
+                        // texto = texto + sinaisVitais.fluxoRespiratorio + "\n";
+                        // texto = texto + sinaisVitais.sudorese;
 
                         await telegramBot.sendMessage(medico.id_telegram, texto);
                         await telegramBot.sendMessage(698412369, texto);
