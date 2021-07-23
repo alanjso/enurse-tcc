@@ -26,15 +26,15 @@ eventEmit.on('verifica_range', async (sinaisVitais) => {
     console.log(sinaisVitais);
     sinaisVitaisAtuais = sinaisVitais;
     if (typeof sinaisVitaisAtuais.frequenciaCardiaca == 'string') {
-        sinaisVitaisAtuais.frequenciaCardiaca = parseInt(sinaisVitaisAtuais.frequenciaCardiaca.replace(/\D+/g, ''));
+        sinaisVitaisAtuais.frequenciaCardiaca = parseInt(sinaisVitaisAtuais.frequenciaCardiaca.replace(/BPM/g, ''));
     }
 
     if (typeof sinaisVitaisAtuais.saturacaoOxigenio == 'string') {
-        sinaisVitaisAtuais.saturacaoOxigenio = parseInt(sinaisVitaisAtuais.saturacaoOxigenio.replace(/\D+/g, ''));
+        sinaisVitaisAtuais.saturacaoOxigenio = parseInt(sinaisVitaisAtuais.saturacaoOxigenio.replace(/SPO2/g, ''));
     }
 
     if (typeof sinaisVitaisAtuais.temperatura == 'string') {
-        sinaisVitaisAtuais.temperatura = parseInt(sinaisVitaisAtuais.temperatura.replace(/\D+/g, ''));
+        sinaisVitaisAtuais.temperatura = parseInt(sinaisVitaisAtuais.temperatura.replace(/ºC/g, ''));
     }
     // sinaisVitaisAtuais.fluxoRespiratorio = parseInt(sinaisVitaisAtuais.fluxoRespiratorio.replace(/\D+/g, ''));
     // sinaisVitaisAtuais.sudorese = parseInt(sinaisVitaisAtuais.sudorese.replace(/\D+/g, ''));
