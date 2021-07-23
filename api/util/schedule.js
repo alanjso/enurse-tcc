@@ -22,19 +22,22 @@ let sinaisVitaisAtuais = {
     sudorese: 0
 }
 eventEmit.on('verifica_range', async (sinaisVitais) => {
-    console.log("Novos valores:");
-    console.log(sinaisVitais);
+    // console.log("Novos valores:");
+    // console.log(sinaisVitais);
     sinaisVitaisAtuais = sinaisVitais;
     if (typeof sinaisVitaisAtuais.frequenciaCardiaca == 'string') {
-        sinaisVitaisAtuais.frequenciaCardiaca = parseInt(sinaisVitaisAtuais.frequenciaCardiaca.replace(/BPM/g, ''));
+        let fc = sinaisVitaisAtuais.frequenciaCardiaca;
+        sinaisVitaisAtuais.frequenciaCardiaca = parseInt(fc.replace(/BPM/g, ''));
     }
 
     if (typeof sinaisVitaisAtuais.saturacaoOxigenio == 'string') {
-        sinaisVitaisAtuais.saturacaoOxigenio = parseInt(sinaisVitaisAtuais.saturacaoOxigenio.replace(/SPO2/g, ''));
+        let so = sinaisVitaisAtuais.saturacaoOxigenio;
+        sinaisVitaisAtuais.saturacaoOxigenio = parseInt(so.replace(/SPO2/g, ''));
     }
 
     if (typeof sinaisVitaisAtuais.temperatura == 'string') {
-        sinaisVitaisAtuais.temperatura = parseInt(sinaisVitaisAtuais.temperatura.replace(/ºC/g, ''));
+        let temp = sinaisVitaisAtuais.temperatura;
+        sinaisVitaisAtuais.temperatura = parseFloat(temp.replace(/ºC/g, ''));
     }
     // sinaisVitaisAtuais.fluxoRespiratorio = parseInt(sinaisVitaisAtuais.fluxoRespiratorio.replace(/\D+/g, ''));
     // sinaisVitaisAtuais.sudorese = parseInt(sinaisVitaisAtuais.sudorese.replace(/\D+/g, ''));
