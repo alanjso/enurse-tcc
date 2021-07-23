@@ -135,14 +135,14 @@ setInterval(async function () {
 
         if (sinaisVitaisAtuais.saturacaoOxigenio < configSinaisVitais.minSpo2 || sinaisVitaisAtuais.saturacaoOxigenio > configSinaisVitais.maxSpo2) {
             texto = "Saturacao de Oxigenio do paciente fora dos limites\n";
-            texto = texto + "valor atual: " + sinaisVitaisAtuais.frequenciaCardiaca;
+            texto = texto + "valor atual: " + sinaisVitaisAtuais.saturacaoOxigenio;
             eventEmit.emit('notificar_medico', texto);
             texto = "";
         }
 
         if (sinaisVitaisAtuais.temperatura < configSinaisVitais.minTemp || sinaisVitaisAtuais.temperatura > configSinaisVitais.maxTemp) {
             texto = "Temperatura do paciente fora dos limites\n";
-            texto = texto + "valor atual: " + sinaisVitaisAtuais.frequenciaCardiaca;
+            texto = texto + "valor atual: " + sinaisVitaisAtuais.temperatura;
             eventEmit.emit('notificar_medico', texto);
             texto = "";
         }
